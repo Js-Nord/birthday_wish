@@ -4,6 +4,7 @@ import pandas as pd
 from random import *
 import os
 PLACEHOLDER = "[NAME]"
+# Change your email and password accordingly
 EMAIL = "use_you_email@whatever.com"
 PASSWORD = "put_your_password_here"
 
@@ -28,6 +29,8 @@ target_month = target_row["month"].values[0]
 if (target_day == today).any() and (target_month == this_month).any():
     new_letter = random_letter.replace(PLACEHOLDER, target_name)
     print("Email sent successfully!")
+    # SMTP value will change according to your email address provider. Some examples:
+    # smtp.gmail.com (Google), smtp.live.com (Outlook), smtp.mail.yahoo.com (Yahoo).
     with smtplib.SMTP("smtp.gmail.com") as connection:
         connection.starttls()
         connection.login(user=my_email, password=password)
