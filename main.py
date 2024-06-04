@@ -17,27 +17,21 @@ path = os.path.join(txt_files, random_file)
 with open(path) as letter:
     random_letter = letter.read()
 
-now = dt.datetime.now()
-today = now.day
-this_month = now.month
-target_row = pandas[pandas["day"] == today]
-target_name = target_row["name"].values[0]
-target_email = target_row["email"].values[0]
-target_day = target_row["day"].values[0]
-target_month = target_row["month"].values[0]
-
-if (target_day == today).any() and (target_month == this_month).any():
-    new_letter = random_letter.replace(PLACEHOLDER, target_name)
-    print("Email sent successfully!")
+data = pd.read_csv("birthdays.csv")
+birthdays_dict = {(data_row["month"], data_row["day"]): data_row for (index, data_row) in data.iterrows()}
+if today_tuple in birthdays_dict:
+    birthday_person = birthdays_dict[today_tuple]
+    new_letter = random_letter.replace(PLACEHOLDER, birthday_person["name"])
+    with smtplib.SMTP("INTRODUCE CORRECT DATA") as connection:
     # SMTP value will change according to your email address provider. Some examples:
     # smtp.gmail.com (Google), smtp.live.com (Outlook), smtp.mail.yahoo.com (Yahoo).
-    with smtplib.SMTP("smtp.gmail.com") as connection:
         connection.starttls()
-        connection.login(user=my_email, password=password)
+        connection.login(MY_EMAIL, PASSWORD)
         connection.sendmail(
-                            from_addr=my_email,
-                            to_addrs=target_email,
-                            msg=f"Subject:Happy Birthday!\n\n{new_letter}"
-                            )
+            from_addr=MY_EMAIL,
+            to_addrs=birthday_person["email"],
+            msg=f"Subject:Happy Birthday!\n\n{new_letter}"
+        )
+    print("Email sent successfully!")
 else:
     print("Its nobody's birthday today")
