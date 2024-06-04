@@ -4,8 +4,8 @@ import pandas as pd
 from random import *
 import os
 PLACEHOLDER = "[NAME]"
-my_email = "jessesnnt@gmail.com"
-password = "nbbmnkjstrsgrjdt"
+EMAIL = "use_you_email@whatever.com"
+PASSWORD = "put_your_password_here"
 
 pandas = pd.read_csv("birthdays.csv")
 txt_files = "letter_templates"
@@ -18,16 +18,16 @@ with open(path) as letter:
 
 now = dt.datetime.now()
 today = now.day
-bd_day = pandas.day
-bd_name = pandas.name
+this_month = now.month
+target_row = pandas[pandas["day"] == today]
+target_name = target_row["name"].values[0]
+target_email = target_row["email"].values[0]
+target_day = target_row["day"].values[0]
+target_month = target_row["month"].values[0]
 
-if (bd_day == today).any():
-    target_row = pandas[pandas["day"] == today]
-    target_name = target_row["name"].values[0]
-    target_email = target_row["email"].values[0]
-
+if (target_day == today).any() and (target_month == this_month).any():
     new_letter = random_letter.replace(PLACEHOLDER, target_name)
-
+    print("Email sent successfully!")
     with smtplib.SMTP("smtp.gmail.com") as connection:
         connection.starttls()
         connection.login(user=my_email, password=password)
@@ -36,5 +36,5 @@ if (bd_day == today).any():
                             to_addrs=target_email,
                             msg=f"Subject:Happy Birthday!\n\n{new_letter}"
                             )
-
-
+else:
+    print("Its nobody's birthday today")
